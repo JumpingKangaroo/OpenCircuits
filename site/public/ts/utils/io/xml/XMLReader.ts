@@ -1,4 +1,5 @@
 import {XMLNode} from "./XMLNode";
+import {XMLable} from "./XMLable";
 
 export class XMLReader {
     private root: XMLDocument;
@@ -11,6 +12,22 @@ export class XMLReader {
 
     public getRoot(): XMLNode {
         return this.rootNode;
+    }
+
+    public loadObject(obj: XMLable) {
+        obj.load(this.rootNode)
+    }
+
+    public static fromString(obj: XMLable, contents: string) {
+        const root = <XMLDocument>new DOMParser().parseFromString(contents, "text/xml");
+        if (root.documentElement.nodeName == "parsererror")
+            return;
+        this.fromDocument(obj, root);
+    }
+
+    public static fromDocument(obj: XMLable, contents: XMLDocument) {
+        const reader = new XMLReader(contents);
+        obj.load(reader.getRoot());
     }
 
     // TODO: remove these functions below

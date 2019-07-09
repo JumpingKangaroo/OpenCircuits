@@ -59,11 +59,11 @@ export const HeaderController = (() => {
 
             projectNameInput.onchange = () => mainCircuit.metadata.setName(projectNameInput.value);
             fileInput.onchange = () => {
-                Importer.LoadCircuitFromFile(mainCircuit, fileInput.files[0]);
+                Importer.LoadFromFile(mainCircuit, fileInput.files[0]);
                 updateName(mainCircuit.metadata.getName());
             };
 
-            downloadButton.onclick = () => Exporter.saveFile(mainCircuit);
+            downloadButton.onclick = () => Exporter.SaveCircuitToFile(mainCircuit);
 
             newButton.onclick = () => {
                 MainDesignerController.NewCircuit();
@@ -75,9 +75,9 @@ export const HeaderController = (() => {
                 MainDesignerController.FetchCircuit(loadId.value);
             };
 
-            downloadPDFButton.onclick = () => Exporter.savePDF(MainDesignerController.GetCanvas(), projectNameInput.value);
+            downloadPDFButton.onclick = () => Exporter.SaveCircuitToPDF(MainDesignerController.GetCanvas(), projectNameInput.value);
 
-            downloadPNGButton.onclick = () => Exporter.savePNG(MainDesignerController.GetCanvas(), projectNameInput.value);
+            downloadPNGButton.onclick = () => Exporter.SaveCircuitToPng(MainDesignerController.GetCanvas(), projectNameInput.value);
         },
         UpdateName: updateName,
         SavingInProgress: () => setSavingState(true),

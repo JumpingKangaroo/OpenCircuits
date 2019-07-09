@@ -1,27 +1,25 @@
 import {Utils} from "./Utils";
-
-declare var jsPDF: any; // jsPDF is external library
-
 import {XMLWriter} from "./xml/XMLWriter";
 import {Circuit} from "../../models/Circuit";
 
-export const Exporter = (() => {
+declare var jsPDF: any; // jsPDF is external library
 
+export const Exporter = (() => {
     return {
-        saveFile: function(circuit: Circuit) {
-            let filePath = Utils.escapeFileName(circuit.metadata.getName());
+        SaveCircuitToFile: function (circuit: Circuit) {
+            let fileName = Utils.escapeFileName(circuit.metadata.getName());
             const data = XMLWriter.fromLable(circuit).serialize();
 
-            const filename = filePath + ".circuit";
+            fileName += '.circuit';
 
             const file = new Blob([data], {type: "text/plain"});
             if (window.navigator.msSaveOrOpenBlob) { // IE10+
-                window.navigator.msSaveOrOpenBlob(file, filename);
+                window.navigator.msSaveOrOpenBlob(file, fileName);
             } else { // Others
                 const a = document.createElement("a");
                 const url = URL.createObjectURL(file);
                 a.href = url;
-                a.download = filename;
+                a.download = fileName;
                 document.body.appendChild(a);
                 a.click();
                 setTimeout(() => {
@@ -30,7 +28,7 @@ export const Exporter = (() => {
                 }, 0);
             }
         },
-        savePNG: function(canvas: HTMLCanvasElement, projectName: string): void {
+        SaveCircuitToPng: function (canvas: HTMLCanvasElement, projectName: string): void {
             const data = canvas.toDataURL("image/png", 1.0);
 
             // Get name
@@ -52,8 +50,8 @@ export const Exporter = (() => {
                 }, 0);
             }
         },
-        savePDF: function(canvas: HTMLCanvasElement, projectName: string): void {
-            const width  = canvas.width;
+        SaveCircuitToPDF: function (canvas: HTMLCanvasElement, projectName: string): void {
+            const width = canvas.width;
             const height = canvas.height;
 
             const data = canvas.toDataURL("image/png", 1.0);
@@ -66,7 +64,7 @@ export const Exporter = (() => {
             pdf.setFillColor("#CCC");
             pdf.rect(0, 0, width, height, "F");
 
-            const pdfWidth  = pdf.internal.pageSize.getWidth();
+            const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
 
             pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);

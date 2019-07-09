@@ -3,6 +3,7 @@ import {Circuit} from "../models/Circuit";
 import {Importer} from "../utils/io/Importer";
 import {XMLWriter} from "../utils/io/xml/XMLWriter";
 import {CircuitDesigner} from "../models/CircuitDesigner";
+import {XMLReader} from "../utils/io/xml/XMLReader";
 
 export const RemoteCircuitController = (() => {
     let circuitCache = new Array<string>();
@@ -31,7 +32,7 @@ export const RemoteCircuitController = (() => {
                 xhr.open('GET', 'api/circuits/' + escape(id));
                 xhr.onload = () => {
                     if (xhr.status === 200) {
-                        Importer.LoadCircuitXMLDocument(circuit, xhr.responseXML);
+                        XMLReader.fromDocument(circuit, xhr.responseXML);
                         circuitCache[circuit.metadata.getId()] = xhr.responseText;
                         resolve(circuit.metadata);
                     } else {

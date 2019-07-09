@@ -4,7 +4,8 @@ import {XMLNode} from "../utils/io/xml/XMLNode";
 import {SeparatedComponentCollection,
         CreateWire,
         SaveGroup,
-        LoadGroup} from "../utils/ComponentUtils";
+        LoadGroup,
+        SeparateGroup} from "../utils/ComponentUtils";
 
 import {Propagation} from "./Propagation";
 
@@ -12,7 +13,6 @@ import {IOObject}  from "./ioobjects/IOObject";
 import {Component} from "./ioobjects/Component";
 import {Wire}      from "./ioobjects/Wire";
 import {ICData}    from "./ioobjects/other/ICData";
-import {WirePort}  from "./ioobjects/other/WirePort";
 
 import {InputPort}  from "./ports/InputPort";
 import {OutputPort} from "./ports/OutputPort";
@@ -64,15 +64,17 @@ export class CircuitDesigner implements XMLable {
     public propagate(receiver: IOObject, signal: boolean): void {
         this.propagationQueue.push(new Propagation(receiver, signal));
 
-        if (this.updateRequests == 0) {
-            this.updateRequests++;
+        if (this.updateRequests > 0)
+            return;
 
-            // instant propagation
-            if (this.propagationTime == 0)
-                this.update();
-            else
-                setTimeout(() => this.update(), this.propagationTime);
-        }
+        this.updateRequests++;
+
+        // instant propagation
+        if (this.propagationTime == 0)
+            this.update();
+        else if (this.propagationTime > 0)
+            setTimeout(() => this.update(), this.propagationTime);
+        // Else if propagation time is < 0 then don't propagate at all
     }
 
     /**
@@ -109,7 +111,7 @@ export class CircuitDesigner implements XMLable {
 
     public addGroup(group: SeparatedComponentCollection): void {
         for (const a of group.getAllComponents())
-            this.addObject(a)
+            this.addObject(a);
 
         for (const b of group.wires) {
             this.wires.push(b);
@@ -119,6 +121,11 @@ export class CircuitDesigner implements XMLable {
 
     public addICData(data: ICData): void {
         this.ics.push(data);
+    }
+
+    public removeICData(data: ICData): void {
+        const i = this.ics.indexOf(data);
+        this.ics.splice(i, 1);
     }
 
     public addObjects(objects: Array<Component>): void {
@@ -204,7 +211,6 @@ export class CircuitDesigner implements XMLable {
         SaveGroup(node, this.objects, this.wires, icIdMap);
     }
 
-
     public load(node: XMLNode): void {
         this.reset();
 
@@ -238,8 +244,27 @@ export class CircuitDesigner implements XMLable {
         this.updateCallback();
     }
 
-    public getXMLName(): string {
-        return "designer";
+    // Shift an object to a certain position
+    //  within it's list
+    public shift(obj: IOObject, i?: number): number {
+        // Find initial position in list
+        const arr: Array<IOObject> =
+                (obj instanceof Component) ? (this.objects) : (this.wires);
+        const i0 = arr.indexOf(obj);
+        if (i0 === -1)
+            throw new Error("Can't move object! Object doesn't exist!");
+
+        // Shift object to position
+        i = (i == undefined ? arr.length : i);
+        arr.splice(i0, 1);
+        arr.splice(i, 0, obj);
+
+        // Return initial position
+        return i0;
+    }
+
+    public getGroup(): SeparatedComponentCollection {
+        return SeparateGroup((<Array<IOObject>>this.objects).concat(this.wires));
     }
 
     public getObjects(): Array<Component> {
@@ -248,6 +273,14 @@ export class CircuitDesigner implements XMLable {
 
     public getWires(): Array<Wire> {
         return this.wires.slice(); // Shallow copy array
+    }
+
+    public getICData(): Array<ICData> {
+        return this.ics.slice(); // Shallow copy array
+    }
+
+    public getXMLName(): string {
+        return "designer";
     }
 
 }
