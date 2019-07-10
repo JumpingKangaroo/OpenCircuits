@@ -4,7 +4,7 @@ import (
 	"flag"
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/model/storage"
 	"github.com/OpenCircuits/OpenCircuits/site/go/web"

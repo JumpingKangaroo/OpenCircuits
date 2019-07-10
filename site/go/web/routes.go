@@ -1,7 +1,7 @@
 package web
 
 import (
-	"github.com/OpenCircuits/OpenCircuits/site/go/core/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/gin-gonic/gin"
 )
 

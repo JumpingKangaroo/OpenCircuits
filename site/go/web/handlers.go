@@ -2,7 +2,10 @@ package web
 
 import (
 	"encoding/json"
+<<<<<<< HEAD
 	"github.com/gin-gonic/contrib/sessions"
+=======
+>>>>>>> origin/master
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
