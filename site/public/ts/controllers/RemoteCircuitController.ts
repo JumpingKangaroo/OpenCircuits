@@ -9,9 +9,7 @@ export const RemoteCircuitController = (() => {
     let circuitCache = new Array<string>();
 
     // Sort of a hack.  Keeps the blank circuit from being pushed to the remote
-    const blankCircuit = new Circuit();
-    blankCircuit.designer = new CircuitDesigner();
-    circuitCache[-1] = XMLWriter.fromLable(blankCircuit).serialize();
+    circuitCache[-1] = XMLWriter.fromLable(new Circuit()).serialize();
 
     return {
         LoadCircuitList: () => new Promise<CircuitMetadata[]>((resolve, reject) => {
@@ -32,7 +30,7 @@ export const RemoteCircuitController = (() => {
                 xhr.open('GET', 'api/circuits/' + escape(id));
                 xhr.onload = () => {
                     if (xhr.status === 200) {
-                        XMLReader.fromDocument(circuit, xhr.responseXML);
+                        XMLReader.fromXMLDocumentDirect(circuit, xhr.responseXML);
                         circuitCache[circuit.metadata.getId()] = xhr.responseText;
                         resolve(circuit.metadata);
                     } else {

@@ -11,7 +11,6 @@ type MemCircuitStorageInterfaceFactory struct {
 }
 
 type memCircuitStorage struct {
-	// This is fine since maps are reference types
 	// TODO: this should support concurrency if used for more than single-request testing
 	m         map[model.CircuitId]model.Circuit
 	currentId model.CircuitId
@@ -19,8 +18,7 @@ type memCircuitStorage struct {
 
 func (m *MemCircuitStorageInterfaceFactory) CreateCircuitStorageInterface() interfaces.CircuitStorageInterface {
 	// Since the storage supports the interface this is fine.  For other kinds of storage, this pattern
-	//	of returning a single global object is not suitable.  Each call to this function should return a distinct
-	//	instance (i.e. a distinct connection to a database)
+	//	of returning a single global object may not be suitable.
 	if m.memInterface == nil {
 		m.memInterface = &memCircuitStorage{m: make(map[model.CircuitId]model.Circuit)}
 	}
@@ -38,7 +36,7 @@ func (mem *memCircuitStorage) UpdateCircuit(c model.Circuit) {
 func (mem *memCircuitStorage) EnumerateCircuits(userId model.UserId) []model.CircuitMetadata {
 	var ret []model.CircuitMetadata
 	for _,v := range mem.m {
-		// TODO: users can only view their own circuits for now
+		// TODO: move access filtering to a separate method
 		if v.Metadata.Owner == userId {
 			ret = append(ret, v.Metadata)
 		}

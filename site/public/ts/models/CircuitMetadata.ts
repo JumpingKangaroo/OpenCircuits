@@ -7,7 +7,8 @@ export class CircuitMetadata implements XMLable {
     // Fields the client can modify
     //
     name: string = '';
-    version: number = -1;
+    // The schema version
+    version: number = 1;
 
     //
     // Fields the server will reject modification of

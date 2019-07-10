@@ -18,14 +18,21 @@ export class XMLReader {
         obj.load(this.rootNode)
     }
 
-    public static fromString(obj: XMLable, contents: string) {
+    public static fromString(contents: string): XMLReader {
+        const root = <XMLDocument>new DOMParser().parseFromString(contents, "text/xml");
+        if (root.documentElement.nodeName == "parsererror")
+            return null;
+        return new XMLReader(root);
+    }
+
+    public static fromStringDirect(obj: XMLable, contents: string) {
         const root = <XMLDocument>new DOMParser().parseFromString(contents, "text/xml");
         if (root.documentElement.nodeName == "parsererror")
             return;
-        this.fromDocument(obj, root);
+        this.fromXMLDocumentDirect(obj, root);
     }
 
-    public static fromDocument(obj: XMLable, contents: XMLDocument) {
+    public static fromXMLDocumentDirect(obj: XMLable, contents: XMLDocument) {
         const reader = new XMLReader(contents);
         obj.load(reader.getRoot());
     }

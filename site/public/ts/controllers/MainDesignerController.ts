@@ -185,6 +185,7 @@ export const MainDesignerController = (() => {
             return circuit;
         },
         FetchCircuit: function(id: string): Promise<Circuit> {
+            // TODO: support checks that ensures we don't accidentally load an old version
             return RemoteCircuitController.LoadCircuit(circuit, id)
                 .then((metadata) => {
                     HeaderController.UpdateName(metadata.getName());
@@ -196,7 +197,7 @@ export const MainDesignerController = (() => {
                     return circuit;
                 });
         },
-        PushCircuit: function(): Promise<any> {
+        PushCircuit: function(): Promise<void> {
             // TODO: streamline and expand in-progress and other status indicators
             HeaderController.SavingInProgress();
             return RemoteCircuitController.PushCircuit(circuit)

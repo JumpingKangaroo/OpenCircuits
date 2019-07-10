@@ -44,5 +44,3 @@ func main() {
 
 	router.Run("127.0.0.1:9090")
 }
-
-// TODO: BLocking: Simple event-based saving

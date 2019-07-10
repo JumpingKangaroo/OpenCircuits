@@ -7,10 +7,9 @@ declare var jsPDF: any; // jsPDF is external library
 export const Exporter = (() => {
     return {
         SaveCircuitToFile: function (circuit: Circuit) {
-            let fileName = Utils.escapeFileName(circuit.metadata.getName());
+            const fileName = Utils.escapeFileName(circuit.metadata.getName()) + '.circuit';
             const data = XMLWriter.fromLable(circuit).serialize();
 
-            fileName += '.circuit';
 
             const file = new Blob([data], {type: "text/plain"});
             if (window.navigator.msSaveOrOpenBlob) { // IE10+

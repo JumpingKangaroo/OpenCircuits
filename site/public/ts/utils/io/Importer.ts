@@ -1,9 +1,10 @@
 import {XMLReader} from "./xml/XMLReader";
-import {XMLable} from "./xml/XMLable";
+import {Circuit} from "../../models/Circuit";
+import {ResolveVersionConflict} from "./VersionConflictResolver";
 
 export const Importer = (() => {
     return {
-        LoadFromFile: function (obj: XMLable, file: File): void {
+        LoadCircuitFromFile: function (circuit: Circuit, file: File): void {
             // TOOD: only ask for confirmation if nothing was done to the scene
             //        ex. no objects, or wires, or history of actions
             const open = confirm("Are you sure you want to overwrite your current scene?");
@@ -11,7 +12,9 @@ export const Importer = (() => {
             if (open) {
                 const reader = new FileReader();
                 reader.onload = () => {
-                    XMLReader.fromString(obj, reader.result.toString());
+                    const docReader = XMLReader.fromString(reader.result.toString());
+                    ResolveVersionConflict(docReader);
+                    docReader.loadObject(circuit);
                 };
 
                 reader.readAsText(file);

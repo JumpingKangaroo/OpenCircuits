@@ -1,7 +1,5 @@
 import {V} from "../utils/math/Vector";
 
-import {Exporter} from "../utils/io/Exporter";
-import {Importer} from "../utils/io/Importer";
 import {CopyGroup} from "../utils/ComponentUtils";
 
 import {GroupAction} from "../utils/actions/GroupAction";
@@ -62,7 +60,7 @@ export const CopyController = (() => {
         const contents = e.clipboardData.getData("text/xml");
 
         const designer = new CircuitDesigner(-1);
-        XMLReader.fromString(designer, contents);
+        XMLReader.fromStringDirect(designer, contents);
 
         const group = CopyGroup(designer.getGroup());
         const objs = group.getAllComponents();

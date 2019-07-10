@@ -69,7 +69,14 @@ function FixGroup(objs: XMLNode, wiresNode: XMLNode): void {
     }
 }
 
+// This function must be idempotent
 export function ResolveVersionConflict(reader: XMLReader): void {
+    // TODO: for now this is fine, but once we update metadata this will need to change
+    if (reader.getRoot().findChild('metadata') !== null)
+        return;
+    if (reader.getRoot().hasAttribute('version'))
+        return;
+
     const root = reader.getRoot();
     root.replaceChildrenWithName("ics", "icdata");
 
@@ -117,4 +124,5 @@ export function ResolveVersionConflict(reader: XMLReader): void {
     }
 
     FixGroup(objs, wiresNode);
+
 }

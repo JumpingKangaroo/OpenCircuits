@@ -3,11 +3,11 @@ import {CircuitMetadata} from "./CircuitMetadata";
 import {XMLable} from "../utils/io/xml/XMLable";
 import {XMLNode} from "../utils/io/xml/XMLNode";
 
-// This mostly encapsulates the circuit designer and any metadata of the circuit
+// This encapsulates the circuit designer and any metadata of the circuit
 // This separates the behavior of facilitating synchronization with the server
 //  with the behavior of the application.
 export class Circuit implements XMLable {
-    designer: CircuitDesigner;
+    designer: CircuitDesigner = new CircuitDesigner();
     metadata: CircuitMetadata = new CircuitMetadata();
 
     public save(node: XMLNode): void {

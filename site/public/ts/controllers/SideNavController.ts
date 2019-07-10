@@ -43,7 +43,7 @@ export const SideNavController = (() => {
     }
 
     return {
-        Init: function(): Promise<any> {
+        Init: function(): Promise<void> {
             isOpen = false;
 
             tab.onclick = () => { SideNavController.Toggle(); };

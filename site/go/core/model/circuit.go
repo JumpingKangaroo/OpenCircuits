@@ -13,8 +13,6 @@ type CircuitDesigner struct {
 	RawContent string `xml:",innerxml"`
 }
 
-// We use a string for the currently xml content of the circuit
-//	and make it distinct from other data like the id or name
 type Circuit struct {
 	Metadata CircuitMetadata `xml:"metadata"`
 	Designer CircuitDesigner `xml:"designer"`
@@ -27,6 +25,6 @@ func (c *Circuit) Update(newCircuit Circuit) {
 
 func (m *CircuitMetadata) Update(newMetadata CircuitMetadata) {
 	m.Name = newMetadata.Name
-	m.Version++
+	m.Version = newMetadata.Version
 	// For now, we don't support ownership transfer
 }
