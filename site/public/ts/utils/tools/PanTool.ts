@@ -1,5 +1,4 @@
-import {LEFT_MOUSE_BUTTON,
-        MIDDLE_MOUSE_BUTTON,
+import {MIDDLE_MOUSE_BUTTON,
         OPTION_KEY} from "../Constants";
 import {Tool} from "./Tool";
 import {Input} from "../Input";
@@ -25,9 +24,16 @@ export class PanTool extends Tool {
 
         this.isDragging = false;
 
-        return (event == "keydown" && button === OPTION_KEY ||
-                event == "mousedrag" && input.getTouchCount() == 2 ||
-                event == "mousedrag" && button === MIDDLE_MOUSE_BUTTON);
+        if (event == "keydown" && button === OPTION_KEY)
+            return true;
+
+        if (event == "mousedrag" && (button === MIDDLE_MOUSE_BUTTON ||
+                                     input.getTouchCount() == 2)) {
+            this.onMouseDrag(input); // Explicitly drag
+            return true;
+        }
+
+        return false;
     }
 
     public deactivate(event: string, input: Input, button?: number): boolean {
@@ -37,7 +43,7 @@ export class PanTool extends Tool {
                !this.isDragging && event == "keyup" && button === OPTION_KEY);
     }
 
-    public onMouseDrag(input: Input, button: number): boolean {
+    public onMouseDrag(input: Input): boolean {
         this.isDragging = true;
 
         const dPos = input.getDeltaMousePos();

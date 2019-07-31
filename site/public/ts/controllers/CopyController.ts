@@ -3,7 +3,7 @@ import {V} from "../utils/math/Vector";
 import {CopyGroup} from "../utils/ComponentUtils";
 
 import {GroupAction} from "../utils/actions/GroupAction";
-import {TranslateAction} from "../utils/actions/transform/TranslateAction";
+import {CreateGroupTranslateAction} from "../utils/actions/transform/TranslateAction";
 import {CreateGroupSelectAction,
         CreateDeselectAllAction} from "../utils/actions/selection/SelectAction";
 import {CreateDeleteGroupAction} from "../utils/actions/deletion/DeleteGroupActionFactory";
@@ -30,7 +30,7 @@ export const CopyController = (() => {
 
         // Add all necessary IC data
         const icDatas = selections.filter((o) => o instanceof IC)
-                                  .map((o) => (o as IC).getData());
+                .map((o) => (o as IC).getData());
 
         // Add unique ICData to the circuit
         icDatas.forEach((data, i) => {
@@ -51,7 +51,7 @@ export const CopyController = (() => {
 
         // Delete the selections
         MainDesignerController.AddAction(
-            CreateDeleteGroupAction(objs).execute()
+            CreateDeleteGroupAction(MainDesignerController.GetSelectionTool(), objs).execute()
         );
     }
 
@@ -77,22 +77,25 @@ export const CopyController = (() => {
         action.add(CreateDeselectAllAction(MainDesignerController.GetSelectionTool()));
 
         // Select everything that was added
-        action.add(CreateGroupSelectAction(
-                        MainDesignerController.GetSelectionTool(), objs));
+        action.add(CreateGroupSelectAction(MainDesignerController.GetSelectionTool(), objs));
 
         // Translate the copies over a bit
-        action.add(new TranslateAction(objs, objs.map((o) => o.getPos()),
-                                        objs.map((o) => o.getPos().add(V(5, 5)))));
+        action.add(CreateGroupTranslateAction(objs, objs.map((o) => o.getPos().add(V(5, 5)))));
 
         MainDesignerController.AddAction(action.execute());
         MainDesignerController.Render();
     }
 
+    const isActive = function(): boolean {
+        return MainDesignerController.IsActive() &&
+                MainDesignerController.GetCurrentTool() == MainDesignerController.GetSelectionTool();
+    }
+
     return {
         Init: function(): void {
-            document.addEventListener('copy',  (e) => {copy(e)},  false);
-            document.addEventListener('cut',   (e) => {cut(e)},   false);
-            document.addEventListener('paste', (e) => {paste(e)}, false);
+            document.addEventListener('copy',  (e) => !isActive() || copy(e),  false);
+            document.addEventListener('cut',   (e) => !isActive() || cut(e),   false);
+            document.addEventListener('paste', (e) => !isActive() || paste(e), false);
         }
     }
 } )();

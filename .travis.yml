@@ -14,7 +14,9 @@ install:
     npm install
 
 script:
-    - npm run test
+    - npm run build
+    - npm run test -- --maxWorkers=2
+    - npm run lint
 
 notifications:
   email: false

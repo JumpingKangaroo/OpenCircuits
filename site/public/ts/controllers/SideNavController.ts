@@ -12,6 +12,8 @@ export const SideNavController = (() => {
 
     const overlay = document.getElementById("overlay");
 
+    const context = document.getElementById("content");
+
     let isOpen = false;
     let disabled = false;
 
@@ -40,6 +42,7 @@ export const SideNavController = (() => {
     const toggle = function(): void {
         sidenav.classList.toggle("shrink");
         overlay.classList.toggle("invisible");
+        context.classList.toggle("sidenav__shift");
     }
 
     return {
@@ -50,7 +53,10 @@ export const SideNavController = (() => {
 
             sidenavModeCheckbox.onchange = () => { toggleEditMode() };
 
-            overlay.onclick = () => { SideNavController.Toggle(); };
+            overlay.addEventListener("click", () => {
+                if (SideNavController.IsOpen())
+                    SideNavController.Toggle();
+            });
 
             return RemoteCircuitController.LoadCircuitList()
                 .then((metadatas) => {

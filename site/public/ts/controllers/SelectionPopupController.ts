@@ -14,6 +14,7 @@ import {BusButtonPopupModule} from "../utils/selectionpopup/BusButtonPopupModule
 import {ColorPopupModule} from "../utils/selectionpopup/ColorPopupModule";
 import {InputCountPopupModule} from "../utils/selectionpopup/InputCountPopupModule";
 import {OutputCountPopupModule} from "../utils/selectionpopup/OutputCountPopupModule";
+import {ClockFrequencyPopupModule} from "../utils/selectionpopup/ClockFrequencyPopupModule";
 
 /**
 * A popup that exposes certain properties of the selected components to the user
@@ -34,10 +35,10 @@ export const SelectionPopupController = (() => {
     }
 
     return {
-        Init: function(cam: Camera, div_id: string = "popup"): void {
+        Init: function(cam: Camera, divId: string = "selection-popup"): void {
             camera = cam;
 
-            div = document.getElementById(div_id) as HTMLDivElement;
+            div = document.getElementById(divId) as HTMLDivElement;
             // ? .js sets position to "absolute" -- why? Why not set in the css file
 
             modules = new Array<SelectionPopupModule>(
@@ -46,10 +47,13 @@ export const SelectionPopupController = (() => {
                 new ColorPopupModule(div),
                 new InputCountPopupModule(div),
                 new OutputCountPopupModule(div),
+                new ClockFrequencyPopupModule(div),
                 new ICButtonPopupModule(div),
                 new BusButtonPopupModule(div)
             );
             pos = V(0, 0);
+
+            SelectionPopupController.Hide();
         },
         Update: function(): void {
             const selections = MainDesignerController.GetSelections();
@@ -69,13 +73,13 @@ export const SelectionPopupController = (() => {
                         return o.getWorldTargetPos();
                 });
                 const sum = positions.reduce((acc, pos) => acc.add(pos), V(0, 0));
-                const screen_pos = camera.getScreenPos(sum.scale(1/positions.length)).sub(0, div.clientHeight/2);
+                const screenPos = camera.getScreenPos(sum.scale(1/positions.length)).sub(0, div.clientHeight/2);
 
                 // TODO: clamp should make sure not to overlap with other screen elements
                 //const lo = new Vector(0);
                 //const hi = new Vector(document.body.clientWidth, document.body.clientHeight);
 
-                setPos(screen_pos);// Vector.clamp(screen_pos, lo, hi);
+                setPos(screenPos);// Vector.clamp(screen_pos, lo, hi);
 
                 this.Show();
             } else {
@@ -83,11 +87,11 @@ export const SelectionPopupController = (() => {
             }
         },
         Show: function(): void {
-            div.style.visibility = "visible";
+            div.classList.remove("invisible")
             div.focus();
         },
         Hide: function(): void {
-            div.style.visibility = "hidden";
+            div.classList.add("invisible");
         }
     };
 })();

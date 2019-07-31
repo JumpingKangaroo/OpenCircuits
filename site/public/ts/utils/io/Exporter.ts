@@ -1,4 +1,6 @@
 import {Utils} from "./Utils";
+import jsPDF from "jspdf";
+
 import {XMLWriter} from "./xml/XMLWriter";
 import {Circuit} from "../../models/Circuit";
 

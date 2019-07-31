@@ -2,15 +2,14 @@ package web
 
 import (
 	"encoding/json"
-<<<<<<< HEAD
-	"github.com/gin-gonic/contrib/sessions"
-=======
->>>>>>> origin/master
 	"github.com/gin-gonic/gin"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 )
 
 type Item struct {
@@ -46,10 +45,39 @@ func init() {
 	}
 }
 
-func IndexHandler(c *gin.Context) {
-	session := sessions.Default(c)
-	userId := session.Get("user-id")
-	loggedIn := userId != nil
+func getLastModifiedTime(path string) time.Time {
+	file, err := os.Stat(path)
+	if err != nil {
+		log.Printf("Invalid file path %s\n", path)
+		return time.Now()
+	}
+	return file.ModTime()
+}
 
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userId, "login_link": "/login"})
+func getBustedName(path string) string {
+	return path + "?ver=" + strconv.FormatInt(getLastModifiedTime(path).Unix(), 10)
+}
+
+func indexHandler(c *gin.Context, manager auth.AuthenticationManager) {
+	session := sessions.Default(c)
+	userID := session.Get("user-id")
+	loggedIn := userID != nil
+
+	authData := struct {
+		Headers []template.HTML
+		Buttons []template.HTML
+	}{}
+	for _, a := range manager.AuthMethods {
+		authData.Headers = append(authData.Headers, a.GetLoginHeader())
+		authData.Buttons = append(authData.Buttons, a.GetLoginButton())
+	}
+
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{"navConfig": navConfig, "l": loggedIn, "userId": userID, "authData": authData,
+		"bundleJs": getBustedName("./Bundle.js")})
+}
+
+func noCacheHandler(path string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.File(path)
+	}
 }

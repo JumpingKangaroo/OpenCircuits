@@ -5,6 +5,7 @@ import {Images} from "./utils/Images";
 import {MainDesignerController} from "./controllers/MainDesignerController";
 import {ICDesignerController} from "./controllers/ICDesignerController";
 import {HeaderController} from "./controllers/HeaderController";
+import {LoginController} from "./controllers/LoginController";
 import {CopyController} from "./controllers/CopyController";
 import {ItemNavController} from "./controllers/ItemNavController";
 import {SideNavController} from "./controllers/SideNavController";
@@ -54,7 +55,8 @@ function Init(): void {
             ItemNavController.Init();
             resolve(1);
         }),
-        SideNavController.Init()
+        SideNavController.Init(),
+        LoginController.Init()
     ];
 
     Promise.all(promises).then(() => {

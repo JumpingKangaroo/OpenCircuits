@@ -5,7 +5,7 @@ import {Component} from "../../models/ioobjects/Component";
 import {MainDesignerController} from "../../controllers/MainDesignerController";
 import {SelectionPopupModule} from "./SelectionPopupModule";
 
-import {TranslateAction} from "../actions/transform/TranslateAction";
+import {CreateGroupTranslateAction} from "../actions/transform/TranslateAction";
 
 export class PositionPopupModule extends SelectionPopupModule {
     private xbox: HTMLInputElement;
@@ -13,8 +13,9 @@ export class PositionPopupModule extends SelectionPopupModule {
 
     public constructor(parentDiv: HTMLDivElement) {
         super(parentDiv.querySelector("div#popup-pos-text"));
-        this.xbox = this.div.querySelector("input#popup-position-x");
-        this.ybox = this.div.querySelector("input#popup-position-y");
+
+        this.xbox = this.el.querySelector("input#popup-position-x");
+        this.ybox = this.el.querySelector("input#popup-position-y");
         this.xbox.oninput = () => this.push();
         this.ybox.oninput = () => this.push();
     }
@@ -49,12 +50,11 @@ export class PositionPopupModule extends SelectionPopupModule {
         const components = MainDesignerController.GetSelections().filter(o => o instanceof Component).map(o => o as Component);
 
         MainDesignerController.AddAction(
-            new TranslateAction(components,
-                                components.map((c) => c.getPos()),
-                                components.map((c) =>
-                                    V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
-                                      this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5))
-                                )).execute()
+            CreateGroupTranslateAction(components,
+                                       components.map((c) =>
+                                           V(this.xbox.value == "" ? c.getPos().x : GRID_SIZE * (this.xbox.valueAsNumber + 0.5),
+                                             this.ybox.value == "" ? c.getPos().y : GRID_SIZE * (this.ybox.valueAsNumber + 0.5))
+                                       )).execute()
         );
 
         MainDesignerController.Render();

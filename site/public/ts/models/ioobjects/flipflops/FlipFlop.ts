@@ -14,7 +14,7 @@ import {Component} from "../Component";
 export abstract class FlipFlop extends Component {
     protected clock: boolean = false;
     protected state: boolean = false;
-    protected last_clock: boolean = false;
+    protected lastClock: boolean = false;
 
     public constructor(numInputs: number, size: Vector, inputPositioner?: Positioner<InputPort>) {
         super(new ClampedValue(numInputs), new ClampedValue(2), size, inputPositioner);
@@ -26,8 +26,8 @@ export abstract class FlipFlop extends Component {
     public save(node: XMLNode): void {
         super.save(node);
 
-        node.addAttribute("inputs", this.getInputPortCount());
-        node.addAttribute("outputs", this.getOutputPortCount());
+        node.addAttribute("inputs", this.numInputs());
+        node.addAttribute("outputs", this.numOutputs());
     }
 
     public load(node: XMLNode): void {
