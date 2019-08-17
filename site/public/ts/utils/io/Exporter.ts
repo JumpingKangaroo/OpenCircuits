@@ -8,10 +8,24 @@ declare var jsPDF: any; // jsPDF is external library
 
 export const Exporter = (() => {
     return {
-        SaveCircuitToFile: function (circuit: Circuit) {
-            const fileName = Utils.escapeFileName(circuit.metadata.getName()) + '.circuit';
-            const data = XMLWriter.fromLable(circuit).serialize();
+        WriteCircuit: function(designer: CircuitDesigner, name: string): string {
+            const writer = new XMLWriter(designer.getXMLName());
 
+            writer.setVersion(1);
+            writer.setName(name);
+
+            designer.save(writer.getRoot());
+
+            return writer.serialize();
+        },
+        SaveFile: function(designer: CircuitDesigner, projectName: string): void {
+            // Get name
+            if (projectName.replace(/\s+/g, '') === "")
+                projectName = "Untitled Circuit";
+
+            const data = this.WriteCircuit(designer, projectName);
+
+            const filename = projectName + ".circuit";
 
             const file = new Blob([data], {type: "text/plain"});
             if (window.navigator.msSaveOrOpenBlob) { // IE10+
@@ -29,7 +43,11 @@ export const Exporter = (() => {
                 }, 0);
             }
         },
+<<<<<<< HEAD
         SaveCircuitToPng: function (canvas: HTMLCanvasElement, projectName: string): void {
+=======
+        SavePNG: function(canvas: HTMLCanvasElement, projectName: string): void {
+>>>>>>> origin/master
             const data = canvas.toDataURL("image/png", 1.0);
 
             // Get name
@@ -51,8 +69,13 @@ export const Exporter = (() => {
                 }, 0);
             }
         },
+<<<<<<< HEAD
         SaveCircuitToPDF: function (canvas: HTMLCanvasElement, projectName: string): void {
             const width = canvas.width;
+=======
+        SavePDF: function(canvas: HTMLCanvasElement, projectName: string): void {
+            const width  = canvas.width;
+>>>>>>> origin/master
             const height = canvas.height;
 
             const data = canvas.toDataURL("image/png", 1.0);

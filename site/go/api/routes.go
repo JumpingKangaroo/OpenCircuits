@@ -1,7 +1,6 @@
 package api
 
 import (
-<<<<<<< HEAD
 	"github.com/gin-gonic/gin"
 )
 

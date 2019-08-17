@@ -12,14 +12,14 @@ import (
 )
 
 func main() {
-    // Parse flags
+	// Parse flags
 	googleAuthConfig := flag.String("google_auth", "", "<path-to-config>; Enables google sign-in API login")
 	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
 	storagePtr := flag.String("interface", "sqlite", "The storage interface")
 	pathPtr := flag.String("dbPath", "circuits.db", "The path to the database file (sqlite only)")
 	flag.Parse()
 
-    // Register authentication method
+	// Register authentication method
 	authManager := auth.AuthenticationManager{}
 	if *googleAuthConfig != "" {
 		authManager.RegisterAuthenticationMethod(google.New(*googleAuthConfig))
@@ -49,7 +49,7 @@ func main() {
 	})
 	router.Use(sessions.Sessions("opencircuitssession", store))
 
-    // Register pages
+	// Register pages
 	web.RegisterPages(router, authManager)
 	authManager.RegisterHandlers(router)
 	api.RegisterHandlers(router, authManager)

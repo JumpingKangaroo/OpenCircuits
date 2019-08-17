@@ -12,7 +12,7 @@ const config = {
         new CopyWebpackPlugin([
             {from: 'site/data',       to: 'data'},
             {from: 'site/templates',  to: 'templates'},
-            // {from: 'site/public/css', to: 'css'},
+            {from: 'site/public/examples',   to: 'examples'},
             {from: 'site/public/img', to: 'img'}
         ])
     ],

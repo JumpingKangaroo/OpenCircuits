@@ -1,8 +1,9 @@
+import {LoadExampleCircuit} from "../utils/api/Example";
+import {Importer} from "../utils/io/Importer";
+
 import {MainDesignerController} from "./MainDesignerController";
 import {ItemNavController} from "./ItemNavController";
-import {Importer} from "../utils/io/Importer";
-import {SideNavCircuitListView} from "../views/SideNavCircuitListView";
-import {RemoteCircuitController} from "./RemoteCircuitController";
+import {HeaderController} from "./HeaderController";
 
 export const SideNavController = (() => {
     const tab = document.getElementById("header-sidenav-open-tab");
@@ -13,6 +14,8 @@ export const SideNavController = (() => {
     const overlay = document.getElementById("overlay");
 
     const context = document.getElementById("content");
+
+    const exampleCircuitsList = document.getElementById("example-circuit-list");
 
     let isOpen = false;
     let disabled = false;
@@ -40,9 +43,18 @@ export const SideNavController = (() => {
     }
 
     const toggle = function(): void {
-        sidenav.classList.toggle("shrink");
+        isOpen = !isOpen;
+        sidenav.classList.toggle("sidenav__move");
         overlay.classList.toggle("invisible");
         context.classList.toggle("sidenav__shift");
+    }
+
+    // Callback
+    const loadExampleCircuit = async function(id: string): Promise<void> {
+        const contents = await LoadExampleCircuit(id);
+        Importer.LoadCircuitFromString(MainDesignerController.GetDesigner(), contents, HeaderController.SetProjectName);
+        if (isOpen)
+            toggle();
     }
 
     return {
@@ -58,19 +70,17 @@ export const SideNavController = (() => {
                     SideNavController.Toggle();
             });
 
-            return RemoteCircuitController.LoadCircuitList()
-                .then((metadatas) => {
-                    SideNavCircuitListView.PopulateList(metadatas);
-                })
-                .catch((reason) => {
-                    console.log(reason); // this is most likely because the user isn't logged in
-                });
+            // Set up onclick listeners to example circuits
+            const exampleCircuits = Array.from(exampleCircuitsList.children) as HTMLElement[];
+            for (const exampleCircuit of exampleCircuits) {
+                const id = exampleCircuit.id.split("-")[2];
+                exampleCircuit.onclick = () => loadExampleCircuit(id);
+            }
         },
         Toggle: function(): void {
             if (disabled)
                 return;
 
-            isOpen = !isOpen;
             toggle();
         },
         IsOpen: function(): boolean {
