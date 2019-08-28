@@ -2,7 +2,7 @@ package interfaces
 
 import "github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 
-// TODO: errors that are not a result of improper usage of the client will cause panics
+// NOTE: These functions should never fail, so errors are handled via 'panic', which yield 500-type errors
 
 // Represents an interface to a circuit storage system that simply performs the requested operation.   Implementations
 // do not modify the provided circuits.

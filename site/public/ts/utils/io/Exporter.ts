@@ -11,23 +11,24 @@ export const Exporter = (() => {
         WriteCircuit: function(designer: CircuitDesigner, name: string): string {
             const writer = new XMLWriter(designer.getXMLName());
 
-            writer.setVersion(1);
+            writer.setVersion(1.1);
             writer.setName(name);
+            writer.setThumbnail("data:,"); // TODO: Generate a thumbnail
 
-            designer.save(writer.getRoot());
+            designer.save(writer.getContentsNode());
 
             return writer.serialize();
         },
         SaveFile: function(designer: CircuitDesigner, projectName: string): void {
             // Get name
-            if (projectName.replace(/\s+/g, '') === "")
+            if (projectName.replace(/\s+/g, "") === "")
                 projectName = "Untitled Circuit";
 
             const data = this.WriteCircuit(designer, projectName);
 
             const filename = projectName + ".circuit";
 
-            const file = new Blob([data], {type: "text/plain"});
+            const file = new Blob([data], {type: "text/xml"});
             if (window.navigator.msSaveOrOpenBlob) { // IE10+
                 window.navigator.msSaveOrOpenBlob(file, fileName);
             } else { // Others
@@ -43,15 +44,13 @@ export const Exporter = (() => {
                 }, 0);
             }
         },
-<<<<<<< HEAD
-        SaveCircuitToPng: function (canvas: HTMLCanvasElement, projectName: string): void {
-=======
         SavePNG: function(canvas: HTMLCanvasElement, projectName: string): void {
->>>>>>> origin/master
             const data = canvas.toDataURL("image/png", 1.0);
 
             // Get name
-            const filename = Utils.escapeFileName(projectName) + ".png";
+            if (projectName.replace(/\s+/g, "") === "")
+                projectName = "Untitled Circuit";
+            const filename = projectName + ".png";
 
             if (window.navigator.msSaveOrOpenBlob) { // IE10+
                 const file = new Blob([data], {type: "image/png"});
@@ -69,20 +68,16 @@ export const Exporter = (() => {
                 }, 0);
             }
         },
-<<<<<<< HEAD
-        SaveCircuitToPDF: function (canvas: HTMLCanvasElement, projectName: string): void {
-            const width = canvas.width;
-=======
         SavePDF: function(canvas: HTMLCanvasElement, projectName: string): void {
             const width  = canvas.width;
->>>>>>> origin/master
             const height = canvas.height;
 
             const data = canvas.toDataURL("image/png", 1.0);
             const pdf = new jsPDF("l", "px", [width, height]);
 
             // Get name
-            let filename = Utils.escapeFileName(projectName) + ".pdf";
+            if (projectName.replace(/\s+/g, "") === "")
+                projectName = "Untitled Circuit";
 
             // Fill background
             pdf.setFillColor("#CCC");

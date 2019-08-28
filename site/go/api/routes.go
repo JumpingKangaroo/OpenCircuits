@@ -1,10 +1,14 @@
 package api
 
 import (
+	"fmt"
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
+	"github.com/OpenCircuits/OpenCircuits/site/go/core/model"
 	"github.com/gin-gonic/gin"
 )
 
-func authenticatedHandler(manager auth.AuthenticationManager, handler func(c *gin.Context)) {
+func authenticatedHandler(manager auth.AuthenticationManager, handler func(c *gin.Context, userId model.UserId)) func (c *gin.Context) {
 	return func(c* gin.Context) {
 		parts := strings.SplitN(c.GetHeader("auth"), " ", 2)
 		if len(parts) != 2 {
@@ -16,7 +20,7 @@ func authenticatedHandler(manager auth.AuthenticationManager, handler func(c *gi
 			c.JSON(http.StatusBadRequest, struct {
 				message string
 			}{
-				message: "Cannot call authenticated ping method without valid authentication header",
+				message: "Cannot call authenticated route without valid authentication header",
 			})
 			return
 		}
@@ -25,12 +29,20 @@ func authenticatedHandler(manager auth.AuthenticationManager, handler func(c *gi
 			c.JSON(http.StatusBadRequest, nil)
 			return
 		}
-		handler(c)
+		handler(c, userId)
 	}
 }
 
-func RegisterRoutes(router *gin.Engine) {
+func pingHandler(c *gin.Context, userId model.UserId) {
+	c.JSON(http.StatusOK, fmt.Sprintf("Thank you for pinging: %s", userId))
+}
+
+func RegisterRoutes(router *gin.Engine, manager auth.AuthenticationManager, csif interfaces.CircuitStorageInterfaceFactory) {
 	// TODO: api versioning
+	router.GET("/api/ping", authenticatedHandler(manager, pingHandler))
+	router.GET("/api/example/:id", getExampleCircuitHandler(csif))
+
+	// User-saveable circuits
 	router.GET("/api/circuits/:id", authenticatedHandler(CircuitLoadHandler))
 	router.GET("/api/circuits", authenticatedHandler(CircuitQueryHandler))
 	router.POST("/api/circuits", authenticatedHandler(CircuitCreateHandler))

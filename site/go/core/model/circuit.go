@@ -1,30 +1,34 @@
 package model
 
-// non-contents parts of the circuit
+// CircuitMetadata contains the non-content parts of the circuit
 type CircuitMetadata struct {
-	Id      CircuitId `xml:"id"`
-	Version int       `xml:"version"`
-	Name    string    `xml:"name"`
-	Owner   UserId    `xml:"owner"`
+	ID        CircuitId `xml:"id",json:"id"`
+	Name      string    `xml:"name",json:"name"`
+	Owner     UserId    `xml:"owner",json:"owner"`
+	Desc      string    `xml:"desc",json:"desc"`
+	Thumbnail string    `xml:"thumbnail",json:"thumbnail"`
 }
 
-// Until we need server-side analysis of circuit content, this is fine
+// CircuitDesigner is a simple string until we need server-side analysis of circuit content
 type CircuitDesigner struct {
 	RawContent string `xml:",innerxml"`
 }
 
+// Circuit is the top-level model
 type Circuit struct {
 	Metadata CircuitMetadata `xml:"metadata"`
 	Designer CircuitDesigner `xml:"designer"`
 }
 
+// Update takes a client-supplied circuit and updates the server-side data.  This allows the circuit model to control
+// what parts of the circuit may be overwritten
 func (c *Circuit) Update(newCircuit Circuit) {
 	c.Designer = newCircuit.Designer
 	c.Metadata.Update(newCircuit.Metadata)
 }
 
+// Update same as above
 func (m *CircuitMetadata) Update(newMetadata CircuitMetadata) {
 	m.Name = newMetadata.Name
-	m.Version = newMetadata.Version
-	// For now, we don't support ownership transfer
+	m.Desc = newMetadata.Desc
 }

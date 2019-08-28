@@ -77,7 +77,7 @@ export function ResolveVersionConflict(reader: XMLReader): void {
     if (reader.getRoot().hasAttribute('version'))
         return;
 
-    const root = reader.getRoot();
+    const root = reader.getContentsNode();
     root.replaceChildrenWithName("ics", "icdata");
 
     const objs = root.findChild("objects");
