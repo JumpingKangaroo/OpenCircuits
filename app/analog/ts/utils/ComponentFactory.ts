@@ -4,8 +4,9 @@ import {Battery}       from "analog/models/eeobjects/Battery";
 import {CurrentSource} from "analog/models/eeobjects/CurrentSource";
 import {Resistor}      from "analog/models/eeobjects/Resistor";
 import {AnalogNode}    from "analog/models/eeobjects/AnalogNode";
+import {Scope}         from "analog/models/eeobjects/Scope";
 
-const OBJECTS = [Battery, CurrentSource, Resistor, AnalogNode];
+const OBJECTS = [Battery, CurrentSource, Resistor, AnalogNode, Scope];
 
 const XML_COMPONENTS = new Map<string, new (...args: unknown[]) => AnalogComponent>();
 const XML_NAMES = new Map<new (...args: unknown[]) => AnalogComponent, string>();
