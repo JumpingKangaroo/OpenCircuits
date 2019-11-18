@@ -1,0 +1,25 @@
+.scopeview {
+    z-index: 2;
+    position: absolute;
+    height: 250px;
+    width: 450px;
+
+    left: 300px;
+    top: 150px;
+
+    border: 1px solid #000000;
+
+    padding: 1em;
+
+    border: 1px solid $secondary-color;
+    border-radius: 3px;
+    background-color: rgba(white, 0.8);
+
+}
+
+.scopemove {
+    height: 10px;
+    width: 10px;
+    border: 4px solid blue;
+    position: absolute;
+}

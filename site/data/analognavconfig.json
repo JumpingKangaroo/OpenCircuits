@@ -25,6 +25,11 @@
           "id": "resistor",
           "label": "Resistor",
           "icon": "resistor.svg"
+        }, 
+        {
+          "id": "scope",
+          "label": "Scope",
+          "icon": "resistor.svg"
         }
       ]
     }
