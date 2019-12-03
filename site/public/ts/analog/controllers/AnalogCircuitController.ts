@@ -4,6 +4,7 @@ import {AnalogCircuitDesigner} from "analog/models/AnalogCircuitDesigner";
 
 import {MainDesignerController} from "site/shared/controllers/MainDesignerController";
 import {ContextMenuController} from "site/shared/controllers/ContextMenuController";
+import {ScopePopupController} from "site/shared/controllers/ScopePopupController";
 import {LoginController} from "site/shared/controllers/LoginController";
 import {SideNavController} from "site/shared/controllers/SideNavController";
 import {AnalogHeaderController} from "./AnalogHeaderController";
@@ -16,6 +17,7 @@ import {SplitWireTool} from "core/tools/SplitWireTool";
 
 export class AnalogCircuitController extends MainDesignerController {
     private contextMenu: ContextMenuController;
+    private scopePopup: ScopePopupController;
     private sideNav: SideNavController;
     private loginController: LoginController;
     private headerController: AnalogHeaderController;
@@ -36,6 +38,7 @@ export class AnalogCircuitController extends MainDesignerController {
         );
 
         this.contextMenu = new ContextMenuController(this);
+        this.scopePopup = new ScopePopupController(this);
         this.sideNav = new SideNavController(this);
         this.headerController = new AnalogHeaderController(this);
 

@@ -8,8 +8,6 @@ export class Scope extends AnalogComponent {
     private scopePopup: ScopePopupController;
     public constructor() {
         super(new ClampedValue(2), V(50, 50));    
-        console.log("TESTDFS");
-        this.scopePopup = new ScopePopupController();
     }
 
     public getDisplayName(): string {
